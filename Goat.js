@@ -293,35 +293,42 @@ function compareVersion(version1, version2) {
 	return 0;
 }
 // ==================================================
-// 🚀 MARINA BOT COMMANDS INTEGRATION - SAFE & SIMPLE
+// 🚀 MARINA BOT - SUPER SIMPLE TEST
 // ==================================================
 
-/* ... try {
-    const CommandHandler = require('./scripts/cmds/handler');
-    const marinaHandler = new CommandHandler();
-    
-    // ✅ Safe integration with existing message system
-    const originalOnChat = global.GoatBot.onChat;
-    
-    global.GoatBot.onChat = async function({ api, event }) {
-        try {
-            // First call original handler
-            if (originalOnChat) {
-                await originalOnChat({ api, event });
-            }
-            
-            // Then call Marina Bot handler
-            const response = await marinaHandler.handleMessage(event, event);
-            if (response) {
-                await api.sendMessage(response, event.threadID, event.messageID);
-            }
-        } catch (error) {
-            // Silent fail - no disruption
+console.log("💖 Marina Bot: Testing Integration...");
+
+// ✅ Simple test without modules
+try {
+    class SimpleHandler {
+        constructor() {
+            this.commands = new Map();
+            this.commands.set('test', { 
+                execute: async () => "🎉 MARINA BOT TEST SUCCESSFUL!" 
+            });
+            console.log("💖 Simple Handler Ready!");
         }
+        
+        async handleMessage(message, event) {
+            if (message.body === '!test') {
+                return "🎉 Marina Bot is Working!";
+            }
+            return null;
+        }
+    }
+    
+    const simpleHandler = new SimpleHandler();
+    
+    // Safe integration
+    const originalOnChat = global.GoatBot.onChat;
+    global.GoatBot.onChat = async function({ api, event }) {
+        if (originalOnChat) await originalOnChat({ api, event });
+        const response = await simpleHandler.handleMessage(event, event);
+        if (response) await api.sendMessage(response, event.threadID, event.messageID);
     };
     
-    console.log("💖 Marina Bot 5000+ Commands Integrated Successfully!");
+    console.log("✅ Marina Bot Integrated Successfully!");
+    
 } catch (error) {
-    console.log("⚠️ Marina Bot: " + error.message);
-			}
-... */
+    console.log("❌ Marina Error: " + error.message);
+}
