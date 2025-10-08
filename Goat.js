@@ -296,7 +296,7 @@ function compareVersion(version1, version2) {
 // 🚀 MARINA BOT COMMANDS INTEGRATION - SAFE & SIMPLE
 // ==================================================
 
-try {
+/* ... try {
     const CommandHandler = require('./scripts/cmds/handler');
     const marinaHandler = new CommandHandler();
     
@@ -324,3 +324,4 @@ try {
 } catch (error) {
     console.log("⚠️ Marina Bot: " + error.message);
 			}
+... */
