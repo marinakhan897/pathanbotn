@@ -293,42 +293,95 @@ function compareVersion(version1, version2) {
 	return 0;
 }
 // ==================================================
-// 🚀 MARINA BOT - SUPER SIMPLE TEST
+// 🚀 MARINA BOT - WORKING INTEGRATION
 // ==================================================
 
-console.log("💖 Marina Bot: Testing Integration...");
+console.log("💖 Marina Bot: Initializing...");
 
-// ✅ Simple test without modules
+// ✅ SIMPLE & WORKING VERSION
 try {
-    class SimpleHandler {
+    class MarinaHandler {
         constructor() {
             this.commands = new Map();
-            this.commands.set('test', { 
-                execute: async () => "🎉 MARINA BOT TEST SUCCESSFUL!" 
-            });
-            console.log("💖 Simple Handler Ready!");
+            this.loadCommands();
+            console.log("💖 Marina Bot: Basic Commands Ready!");
         }
-        
+
+        loadCommands() {
+            // ✅ BASIC WORKING COMMANDS
+            this.commands.set('test', {
+                execute: async () => "🎉 MARINA BOT TEST SUCCESSFUL! Working Perfectly!"
+            });
+            
+            this.commands.set('marina', {
+                execute: async () => "💖 MARINA BOT v2.0 - 5000+ Commands Ready!"
+            });
+            
+            this.commands.set('help', {
+                execute: async () => `💖 MARINA BOT HELP\n!test - Test bot\n!marina - Bot info\n!help - This message`
+            });
+
+            this.commands.set('time', {
+                execute: async () => `🕒 Time: ${new Date().toLocaleString()}`
+            });
+
+            console.log(`✅ Marina Commands Loaded: ${this.commands.size}`);
+        }
+
         async handleMessage(message, event) {
-            if (message.body === '!test') {
-                return "🎉 Marina Bot is Working!";
+            try {
+                const text = message.body?.toLowerCase() || '';
+                console.log(`📩 Marina Received: "${text}"`);
+                
+                if (!text.startsWith('!')) {
+                    return null;
+                }
+
+                const args = text.slice(1).trim().split(/ +/);
+                const commandName = args.shift();
+                const command = this.commands.get(commandName);
+
+                if (command) {
+                    console.log(`🎯 Executing: !${commandName}`);
+                    const result = await command.execute(args, event);
+                    return result;
+                } else {
+                    console.log(`❌ Command not found: !${commandName}`);
+                    return `❌ Command "!${commandName}" not found. Try !help`;
+                }
+
+            } catch (error) {
+                console.log(`❌ Marina Error: ${error.message}`);
+                return `❌ Error: ${error.message}`;
             }
-            return null;
         }
     }
+
+    // ✅ INTEGRATION WITH GOAT-BOT
+    const marinaHandler = new MarinaHandler();
     
-    const simpleHandler = new SimpleHandler();
-    
-    // Safe integration
     const originalOnChat = global.GoatBot.onChat;
+    
     global.GoatBot.onChat = async function({ api, event }) {
-        if (originalOnChat) await originalOnChat({ api, event });
-        const response = await simpleHandler.handleMessage(event, event);
-        if (response) await api.sendMessage(response, event.threadID, event.messageID);
+        try {
+            // First process with original handler
+            if (originalOnChat) {
+                await originalOnChat({ api, event });
+            }
+            
+            // Then process with Marina Bot
+            const response = await marinaHandler.handleMessage(event, event);
+            if (response) {
+                console.log("📤 Sending Marina Response...");
+                await api.sendMessage(response, event.threadID, event.messageID);
+            }
+        } catch (error) {
+            console.log("⚠️ Integration Error: " + error.message);
+        }
     };
-    
-    console.log("✅ Marina Bot Integrated Successfully!");
-    
+
+    console.log("✅ Marina Bot Integration Successful!");
+
 } catch (error) {
-    console.log("❌ Marina Error: " + error.message);
-}
+    console.log("❌ Marina Setup Failed: " + error.message);
+					 }
